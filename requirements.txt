@@ -1,0 +1,26 @@
+roboflow #for downloading dataset
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=9.5.0
+
+# Roboflow
+roboflow>=1.1.0
+
+# Data processing
+pandas>=2.0.0
+pyyaml>=6.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+tqdm>=4.65.0
+requests>=2.31.0
+
+# Optional: For AMD ROCm support (uncomment if using AMD GPU)
+# torch-rocm>=2.0.0

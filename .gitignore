@@ -1,2 +1,9 @@
 Hackathon_Doc/
 env/
+class-room--2/
+__pycache__/
+runs/
+Documentation/
+train.py
+training.log
+yolov8m.pt
