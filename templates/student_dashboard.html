@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - Campus Energy Oracle{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-layout student-theme">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-leaf"></i>
+            <span>Energy Oracle</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('student_dashboard') }}" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-trophy"></i>
+                <span>Leaderboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-gift"></i>
+                <span>Rewards</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-bullseye"></i>
+                <span>Challenges</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>My Progress</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="{{ url_for('logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>My Energy Dashboard</h1>
+                <p>Welcome, {{ user }}! 🌱</p>
+            </div>
+            <div class="topbar-right">
+                <div class="points-display">
+                    <i class="fas fa-star"></i>
+                    <span>{{ my_points }} Points</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Personal Stats -->
+        <div class="stats-grid">
+            <div class="stat-card student-card">
+                <div class="stat-icon energy">
+                    <i class="fas fa-plug"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ my_consumption }} kWh</div>
+                    <div class="stat-label">My Consumption</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-down"></i> 15% less than average
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card student-card">
+                <div class="stat-icon savings">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ carbon_footprint }} kg</div>
+                    <div class="stat-label">Carbon Footprint</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-seedling"></i> = {{ (carbon_footprint / 0.02) | int }} trees planted
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card student-card">
+                <div class="stat-icon rank">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">#{{ my_rank }}</div>
+                    <div class="stat-label">Campus Rank</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> Up 5 spots!
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card student-card">
+                <div class="stat-icon points">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ my_points }}</div>
+                    <div class="stat-label">Total Points</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> +250 this week
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Leaderboard -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-trophy"></i> Top Performers</h3>
+                    <a href="#" class="view-all">Full Leaderboard</a>
+                </div>
+                <div class="card-body">
+                    <div id="leaderboardList" class="leaderboard-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Challenges -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-bullseye"></i> Active Challenges</h3>
+                </div>
+                <div class="card-body">
+                    <div class="challenge-item">
+                        <div class="challenge-icon">🌟</div>
+                        <div class="challenge-info">
+                            <h4>Weekend Warrior</h4>
+                            <p>Reduce consumption by 20% this weekend</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                            <span class="progress-text">65% Complete</span>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge-item">
+                        <div class="challenge-icon">⚡</div>
+                        <div class="challenge-info">
+                            <h4>Power Saver</h4>
+                            <p>Turn off devices when leaving room 10 times</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                            <span class="progress-text">8/10 Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Impact Chart -->
+            <div class="dashboard-card card-large">
+                <div class="card-header">
+                    <h3><i class="fas fa-chart-area"></i> My Energy Journey</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="studentEnergyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Rewards -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-gift"></i> Available Rewards</h3>
+                </div>
+                <div class="card-body">
+                    <div class="reward-item">
+                        <i class="fas fa-coffee"></i>
+                        <div class="reward-info">
+                            <h4>Free Canteen Voucher</h4>
+                            <p>500 points</p>
+                        </div>
+                        <button class="btn btn-sm btn-primary">Redeem</button>
+                    </div>
+                    
+                    <div class="reward-item">
+                        <i class="fas fa-book"></i>
+                        <div class="reward-info">
+                            <h4>Library Extension</h4>
+                            <p>750 points</p>
+                        </div>
+                        <button class="btn btn-sm btn-primary">Redeem</button>
+                    </div>
+                    
+                    <div class="reward-item locked">
+                        <i class="fas fa-lock"></i>
+                        <div class="reward-info">
+                            <h4>Priority Registration</h4>
+                            <p>2000 points</p>
+                        </div>
+                        <button class="btn btn-sm btn-secondary" disabled>Locked</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script>
+    // Load leaderboard
+    loadLeaderboard();
+    
+    // Student energy chart
+    const ctx = document.getElementById('studentEnergyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'My Consumption (kWh)',
+                data: [12, 10, 15, 8, 11, 6, 7],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

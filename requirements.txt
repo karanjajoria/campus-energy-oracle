@@ -1,7 +1,10 @@
 roboflow #for downloading dataset
 # Core dependencies
-torch>=2.0.0
-torchvision>=0.15.0
+torch==2.4.1+cu124
+torchvision==0.19.1+cu124
+torchaudio==2.4.1+cu124
+--extra-index-url https://download.pytorch.org/whl/cu124
+
 ultralytics>=8.0.0
 opencv-python>=4.8.0
 numpy>=1.24.0
@@ -21,6 +24,11 @@ seaborn>=0.12.0
 # Utilities
 tqdm>=4.65.0
 requests>=2.31.0
+
+Flask==3.0.0
+Flask-CORS==4.0.0
+python-dotenv==1.0.0
+
 
 # Optional: For AMD ROCm support (uncomment if using AMD GPU)
 # torch-rocm>=2.0.0

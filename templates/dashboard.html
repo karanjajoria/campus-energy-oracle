@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Campus Energy Oracle{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-leaf"></i>
+            <span>Energy Oracle</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('dashboard') }}" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Buildings</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Alerts</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-tools"></i>
+                <span>Maintenance</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="{{ url_for('logout') }}" class="nav-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>Facility Dashboard</h1>
+                <p>Welcome back, {{ user }}</p>
+            </div>
+            <div class="topbar-right">
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">{{ active_alerts }}</span>
+                </div>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ user }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon energy">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ total_consumption }} kWh</div>
+                    <div class="stat-label">Total Consumption</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-down"></i> 12% from last week
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon savings">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">₹{{ total_savings }}</div>
+                    <div class="stat-label">Total Savings</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> 8% increase
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon alerts">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ active_alerts }}</div>
+                    <div class="stat-label">Active Alerts</div>
+                    <div class="stat-trend neutral">
+                        <i class="fas fa-minus"></i> Same as yesterday
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon occupancy">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ occupancy_rate }}%</div>
+                    <div class="stat-label">Occupancy Rate</div>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i> 5% from avg
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="dashboard-grid">
+            <!-- Energy Consumption Chart -->
+            <div class="dashboard-card card-large">
+                <div class="card-header">
+                    <h3>Energy Consumption Trends</h3>
+                    <select class="period-selector">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30">Last 30 Days</option>
+                        <option value="90">Last 90 Days</option>
+                    </select>
+                </div>
+                <div class="card-body">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Building Status -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Building Status</h3>
+                    <button class="btn btn-sm btn-secondary">Refresh</button>
+                </div>
+                <div class="card-body">
+                    <div id="buildingList" class="building-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Recent Alerts</h3>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                <div class="card-body">
+                    <div id="alertsList" class="alerts-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Occupancy Heatmap -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h3>Occupancy Heatmap</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="occupancyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

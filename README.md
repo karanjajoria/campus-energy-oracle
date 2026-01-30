@@ -207,7 +207,7 @@ Indian college campuses waste **30-40% of their energy** (₹15-25 lakhs annuall
 ### Option 1: Docker Setup (Recommended)
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/campus-energy-oracle.git
+git clone https://github.com/karanjajoria/campus-energy-oracle
 cd campus-energy-oracle
 
 # Copy environment variables
@@ -702,7 +702,7 @@ We welcome contributions from the community! Here's how you can help:
 1. **Fork the repository**
 2. **Clone your fork**
 ```bash
-   git clone https://github.com/yourusername/campus-energy-oracle.git
+   git clone https://github.com/karanjajoria/campus-energy-oracle
 ```
 3. **Create a feature branch**
 ```bash

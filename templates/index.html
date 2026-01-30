@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Campus Energy Oracle - AI-Powered Energy Management{% endblock %}
+
+{% block body %}
+<div class="landing-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-leaf"></i>
+                <span>Campus Energy Oracle</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Transform Your Campus into a Sustainable Smart City</h1>
+                <p class="hero-subtitle">
+                    AI-powered energy optimization that reduces waste by 35%, 
+                    saves ₹15L+ annually, and creates climate-conscious communities
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">35%</div>
+                        <div class="stat-label">Energy Reduction</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">₹15L+</div>
+                        <div class="stat-label">Annual Savings</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">150+</div>
+                        <div class="stat-label">Tons CO₂ Avoided</div>
+                    </div>
+                </div>
+                <a href="{{ url_for('login') }}" class="btn btn-large btn-primary">
+                    Get Started <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="hero-image">
+                <div class="dashboard-preview">
+                    <i class="fas fa-chart-line fa-10x"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Real-Time Monitoring</h3>
+                    <p>Track energy consumption across every building, floor, and room with live dashboards</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Predictive AI</h3>
+                    <p>Forecast equipment failures 2-4 weeks early and prevent costly breakdowns</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Student Engagement</h3>
+                    <p>Gamification platform with leaderboards, challenges, and rewards</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Privacy-First</h3>
+                    <p>Edge AI processing ensures all data stays on campus with zero cloud dependency</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Advanced Analytics</h3>
+                    <p>Automated reports, ROI tracking, and NAAC certification support</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Apps</h3>
+                    <p>iOS and Android apps for students, facility teams, and administrators</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Campus Energy Oracle</h4>
+                    <p>AI-powered sustainability for education</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#">Documentation</a>
+                    <a href="#">API</a>
+                    <a href="#">Support</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>team@campusenergyoracle.com</p>
+                    <p>+91 9870330830</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Campus Energy Oracle. Built for AMD Slingshot 2025.</p>
+            </div>
+        </div>
+    </footer>
+</div>
+{% endblock %}
