@@ -1,0 +1,690 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Campus Energy Oracle{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="dashboard-layout admin-theme">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-leaf"></i>
+            <span>Energy Oracle</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-building"></i>
+                <span>Campus Management</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>User Management</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Financial</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-certificate"></i>
+                <span>Certifications</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="admin-profile">
+                <i class="fas fa-user-shield"></i>
+                <div class="profile-info">
+                    <span class="profile-name">{{ user }}</span>
+                    <span class="profile-role">Administrator</span>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="nav-item logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1>Administrator Dashboard</h1>
+                <p class="breadcrumb">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                    <i class="fas fa-chevron-right"></i>
+                    <span>Dashboard</span>
+                </p>
+            </div>
+            <div class="topbar-right">
+                <div class="date-display">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="currentDate">January 30, 2025</span>
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">5</span>
+                </div>
+                <div class="user-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ user }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Key Performance Indicators -->
+        <section class="kpi-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-pie"></i> Key Performance Indicators</h2>
+                <div class="time-filter">
+                    <button class="filter-btn active" data-period="week">This Week</button>
+                    <button class="filter-btn" data-period="month">This Month</button>
+                    <button class="filter-btn" data-period="year">This Year</button>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <!-- Total Savings -->
+                <div class="kpi-card primary">
+                    <div class="kpi-icon">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Total Savings</div>
+                        <div class="kpi-value">₹{{ "{:,.2f}".format(total_savings) }}</div>
+                        <div class="kpi-trend positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>18.5% from last month</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtitle">Annual Target: ₹25L</span>
+                            <div class="kpi-progress">
+                                <div class="kpi-progress-bar" style="width: {{ (total_savings / 250000 * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Energy Reduction -->
+                <div class="kpi-card success">
+                    <div class="kpi-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Energy Reduction</div>
+                        <div class="kpi-value">{{ energy_reduction }}%</div>
+                        <div class="kpi-trend positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>5.2% improvement</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtitle">Target: 40%</span>
+                            <div class="kpi-progress">
+                                <div class="kpi-progress-bar" style="width: {{ (energy_reduction / 40 * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CO₂ Avoided -->
+                <div class="kpi-card eco">
+                    <div class="kpi-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">CO₂ Emissions Avoided</div>
+                        <div class="kpi-value">{{ co2_avoided }} tons</div>
+                        <div class="kpi-trend positive">
+                            <i class="fas fa-seedling"></i>
+                            <span>= {{ (co2_avoided * 50) | int }} trees planted</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtitle">Carbon Neutral Goal: 500 tons/year</span>
+                            <div class="kpi-progress">
+                                <div class="kpi-progress-bar" style="width: {{ (co2_avoided / 500 * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROI -->
+                <div class="kpi-card warning">
+                    <div class="kpi-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="kpi-content">
+                        <div class="kpi-label">Return on Investment</div>
+                        <div class="kpi-value">{{ roi }}%</div>
+                        <div class="kpi-trend positive">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Payback in 8 months</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span class="kpi-subtitle">Initial Investment: ₹12L</span>
+                            <div class="kpi-progress">
+                                <div class="kpi-progress-bar" style="width: {{ (roi / 200 * 100) | round }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Secondary Stats -->
+        <div class="stats-grid-secondary">
+            <div class="stat-card-mini">
+                <i class="fas fa-users stat-mini-icon"></i>
+                <div class="stat-mini-content">
+                    <div class="stat-mini-value">8,547</div>
+                    <div class="stat-mini-label">Active Students</div>
+                </div>
+            </div>
+            
+            <div class="stat-card-mini">
+                <i class="fas fa-building stat-mini-icon"></i>
+                <div class="stat-mini-content">
+                    <div class="stat-mini-value">42</div>
+                    <div class="stat-mini-label">Buildings Monitored</div>
+                </div>
+            </div>
+            
+            <div class="stat-card-mini">
+                <i class="fas fa-exclamation-triangle stat-mini-icon"></i>
+                <div class="stat-mini-content">
+                    <div class="stat-mini-value">7</div>
+                    <div class="stat-mini-label">Critical Alerts</div>
+                </div>
+            </div>
+            
+            <div class="stat-card-mini">
+                <i class="fas fa-tools stat-mini-icon"></i>
+                <div class="stat-mini-content">
+                    <div class="stat-mini-value">23</div>
+                    <div class="stat-mini-label">Pending Maintenance</div>
+                </div>
+            </div>
+            
+            <div class="stat-card-mini">
+                <i class="fas fa-trophy stat-mini-icon"></i>
+                <div class="stat-mini-content">
+                    <div class="stat-mini-value">6,234</div>
+                    <div class="stat-mini-label">Points Awarded</div>
+                </div>
+            </div>
+            
+            <div class="stat-card-mini">
+                <i class="fas fa-star stat-mini-icon"></i>
+                <div class="stat-mini-content">
+                    <div class="stat-mini-value">4.8/5</div>
+                    <div class="stat-mini-label">System Rating</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="admin-dashboard-grid">
+            <!-- Energy Overview Chart -->
+            <div class="dashboard-card card-large">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-chart-area"></i>
+                        <h3>Energy Consumption & Savings Overview</h3>
+                    </div>
+                    <div class="card-actions">
+                        <select class="period-selector" id="energyPeriod">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                        <button class="btn-icon" title="Download Report">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="energyOverviewChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Building Performance -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-building"></i>
+                        <h3>Building Performance</h3>
+                    </div>
+                    <a href="#" class="view-all">View All Buildings</a>
+                </div>
+                <div class="card-body">
+                    <div class="building-performance-list">
+                        <div class="performance-item best">
+                            <div class="performance-rank">
+                                <i class="fas fa-medal"></i>
+                                <span>1</span>
+                            </div>
+                            <div class="performance-info">
+                                <h4>Library Building</h4>
+                                <p>42% energy reduction</p>
+                            </div>
+                            <div class="performance-score">
+                                <span class="score-value">95</span>
+                                <span class="score-label">/100</span>
+                            </div>
+                        </div>
+
+                        <div class="performance-item good">
+                            <div class="performance-rank">
+                                <i class="fas fa-medal"></i>
+                                <span>2</span>
+                            </div>
+                            <div class="performance-info">
+                                <h4>Science Block</h4>
+                                <p>38% energy reduction</p>
+                            </div>
+                            <div class="performance-score">
+                                <span class="score-value">88</span>
+                                <span class="score-label">/100</span>
+                            </div>
+                        </div>
+
+                        <div class="performance-item average">
+                            <div class="performance-rank">
+                                <i class="fas fa-medal"></i>
+                                <span>3</span>
+                            </div>
+                            <div class="performance-info">
+                                <h4>Engineering Block</h4>
+                                <p>35% energy reduction</p>
+                            </div>
+                            <div class="performance-score">
+                                <span class="score-value">82</span>
+                                <span class="score-label">/100</span>
+                            </div>
+                        </div>
+
+                        <div class="performance-item needs-improvement">
+                            <div class="performance-rank">
+                                <span>4</span>
+                            </div>
+                            <div class="performance-info">
+                                <h4>Admin Block</h4>
+                                <p>28% energy reduction</p>
+                            </div>
+                            <div class="performance-score">
+                                <span class="score-value">71</span>
+                                <span class="score-label">/100</span>
+                            </div>
+                        </div>
+
+                        <div class="performance-item poor">
+                            <div class="performance-rank">
+                                <span>5</span>
+                            </div>
+                            <div class="performance-info">
+                                <h4>Sports Complex</h4>
+                                <p>18% energy reduction</p>
+                            </div>
+                            <div class="performance-score">
+                                <span class="score-value">64</span>
+                                <span class="score-label">/100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cost Breakdown -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h3>Cost Breakdown</h3>
+                    </div>
+                    <button class="btn-icon" title="Export">
+                        <i class="fas fa-file-export"></i>
+                    </button>
+                </div>
+                <div class="card-body chart-container">
+                    <canvas id="costBreakdownChart"></canvas>
+                </div>
+                <div class="card-footer">
+                    <div class="cost-summary">
+                        <div class="cost-item">
+                            <span class="cost-dot" style="background: #ef4444;"></span>
+                            <span class="cost-label">Electricity</span>
+                            <span class="cost-value">₹8.2L</span>
+                        </div>
+                        <div class="cost-item">
+                            <span class="cost-dot" style="background: #f59e0b;"></span>
+                            <span class="cost-label">Maintenance</span>
+                            <span class="cost-value">₹2.1L</span>
+                        </div>
+                        <div class="cost-item">
+                            <span class="cost-dot" style="background: #10b981;"></span>
+                            <span class="cost-label">Water</span>
+                            <span class="cost-value">₹1.5L</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Department-wise Consumption -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-layer-group"></i>
+                        <h3>Department-wise Consumption</h3>
+                    </div>
+                    <button class="btn-icon" title="Filter">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="department-list">
+                        <div class="department-item">
+                            <div class="dept-info">
+                                <h4>Computer Science & Engineering</h4>
+                                <span class="dept-metric">1,247 kWh</span>
+                            </div>
+                            <div class="dept-progress">
+                                <div class="progress-bar-horizontal">
+                                    <div class="progress-fill" style="width: 85%; background: #3b82f6;"></div>
+                                </div>
+                                <span class="progress-percentage">85%</span>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="dept-info">
+                                <h4>Mechanical Engineering</h4>
+                                <span class="dept-metric">1,123 kWh</span>
+                            </div>
+                            <div class="dept-progress">
+                                <div class="progress-bar-horizontal">
+                                    <div class="progress-fill" style="width: 76%; background: #8b5cf6;"></div>
+                                </div>
+                                <span class="progress-percentage">76%</span>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="dept-info">
+                                <h4>Electrical Engineering</h4>
+                                <span class="dept-metric">978 kWh</span>
+                            </div>
+                            <div class="dept-progress">
+                                <div class="progress-bar-horizontal">
+                                    <div class="progress-fill" style="width: 66%; background: #10b981;"></div>
+                                </div>
+                                <span class="progress-percentage">66%</span>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="dept-info">
+                                <h4>Civil Engineering</h4>
+                                <span class="dept-metric">856 kWh</span>
+                            </div>
+                            <div class="dept-progress">
+                                <div class="progress-bar-horizontal">
+                                    <div class="progress-fill" style="width: 58%; background: #f59e0b;"></div>
+                                </div>
+                                <span class="progress-percentage">58%</span>
+                            </div>
+                        </div>
+
+                        <div class="department-item">
+                            <div class="dept-info">
+                                <h4>Sciences & Humanities</h4>
+                                <span class="dept-metric">734 kWh</span>
+                            </div>
+                            <div class="dept-progress">
+                                <div class="progress-bar-horizontal">
+                                    <div class="progress-fill" style="width: 50%; background: #ef4444;"></div>
+                                </div>
+                                <span class="progress-percentage">50%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-history"></i>
+                        <h3>Recent System Activities</h3>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="activity-timeline">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Maintenance Completed</h4>
+                                <p>HVAC Unit 7 serviced successfully</p>
+                                <span class="activity-time">15 minutes ago</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Energy Spike Detected</h4>
+                                <p>Block B consuming 25% above average</p>
+                                <span class="activity-time">1 hour ago</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon info">
+                                <i class="fas fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>New Users Added</h4>
+                                <p>234 first-year students onboarded</p>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Challenge Completed</h4>
+                                <p>Hostel A won "Weekend Warrior" challenge</p>
+                                <span class="activity-time">3 hours ago</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon danger">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>Maintenance Alert</h4>
+                                <p>Equipment failure predicted in Building 5</p>
+                                <span class="activity-time">5 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certifications & Compliance -->
+            <div class="dashboard-card card-wide">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-certificate"></i>
+                        <h3>Certifications & Compliance Status</h3>
+                    </div>
+                    <button class="btn btn-sm btn-primary">
+                        <i class="fas fa-download"></i> Export Reports
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="certification-grid">
+                        <div class="cert-card completed">
+                            <div class="cert-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h4>NAAC Green Campus</h4>
+                            <p>Criteria Met: 95%</p>
+                            <div class="cert-progress">
+                                <div class="cert-progress-fill" style="width: 95%"></div>
+                            </div>
+                            <span class="cert-status">Ready for Submission</span>
+                        </div>
+
+                        <div class="cert-card in-progress">
+                            <div class="cert-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h4>ISO 50001 Energy</h4>
+                            <p>Criteria Met: 72%</p>
+                            <div class="cert-progress">
+                                <div class="cert-progress-fill" style="width: 72%"></div>
+                            </div>
+                            <span class="cert-status">In Progress</span>
+                        </div>
+
+                        <div class="cert-card pending">
+                            <div class="cert-icon">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                            <h4>LEED Certification</h4>
+                            <p>Criteria Met: 58%</p>
+                            <div class="cert-progress">
+                                <div class="cert-progress-fill" style="width: 58%"></div>
+                            </div>
+                            <span class="cert-status">Pending Requirements</span>
+                        </div>
+
+                        <div class="cert-card completed">
+                            <div class="cert-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h4>Carbon Neutral Goal</h4>
+                            <p>Criteria Met: 88%</p>
+                            <div class="cert-progress">
+                                <div class="cert-progress-fill" style="width: 88%"></div>
+                            </div>
+                            <span class="cert-status">On Track</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-tasks"></i>
+                        <h3>Quick Actions</h3>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="quick-actions-grid">
+                        <button class="quick-action-btn">
+                            <i class="fas fa-file-download"></i>
+                            <span>Export Monthly Report</span>
+                        </button>
+                        
+                        <button class="quick-action-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Add New User</span>
+                        </button>
+                        
+                        <button class="quick-action-btn">
+                            <i class="fas fa-building"></i>
+                            <span>Add Building</span>
+                        </button>
+                        
+                        <button class="quick-action-btn">
+                            <i class="fas fa-bell"></i>
+                            <span>Configure Alerts</span>
+                        </button>
+                        
+                        <button class="quick-action-btn">
+                            <i class="fas fa-cog"></i>
+                            <span>System Settings</span>
+                        </button>
+                        
+                        <button class="quick-action-btn">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Custom Analytics</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin-charts.js') }}"></script>
+<script>
+    // Set current date
+    const dateDisplay = document.getElementById('currentDate');
+    if (dateDisplay) {
+        const now = new Date();
+        dateDisplay.textContent = now.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
+
+    // Time filter buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            // Add logic to filter data based on period
+            console.log('Filter period:', this.dataset.period);
+        });
+    });
+
+    // Period selector for charts
+    const energyPeriod = document.getElementById('energyPeriod');
+    if (energyPeriod) {
+        energyPeriod.addEventListener('change', function() {
+            // Add logic to update chart
+            console.log('Chart period changed:', this.value);
+        });
+    }
+</script>
+{% endblock %}
