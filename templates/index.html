@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Occupancy Detection | Smart Campus Analytics</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/components.css">
+    <link rel="stylesheet" href="static/css/animations.css">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <div class="logo-icon">📊</div>
+                <div class="brand-text">
+                    <h1>ClassroomDetect</h1>
+                    <p>Occupancy Intelligence</p>
+                </div>
+            </div>
+            <nav class="navbar-links">
+                <a href="#" class="nav-link active" data-section="dashboard">Dashboard</a>
+                <a href="#" class="nav-link" data-section="detect">Detection</a>
+                <a href="#" class="nav-link" data-section="analytics">Analytics</a>
+                <a href="#" class="nav-link" data-section="settings">Settings</a>
+            </nav>
+            <div class="navbar-status">
+                <div class="status-indicator" id="modelStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Quick Actions</h3>
+                <button class="sidebar-btn" id="uploadImageBtn">
+                    <span class="btn-icon">🖼️</span>
+                    <span class="btn-text">Upload Image</span>
+                </button>
+                <button class="sidebar-btn" id="uploadVideoBtn">
+                    <span class="btn-icon">🎥</span>
+                    <span class="btn-text">Upload Video</span>
+                </button>
+                <button class="sidebar-btn" id="webcamBtn">
+                    <span class="btn-icon">📷</span>
+                    <span class="btn-text">Start Webcam</span>
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Settings</h3>
+                <div class="setting-item">
+                    <label for="confidenceSlider">Confidence Threshold</label>
+                    <div class="slider-container">
+                        <input type="range" id="confidenceSlider" min="0.1" max="1" step="0.05" value="0.5">
+                        <span id="confidenceValue">50%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Model Info</h3>
+                <div class="info-item">
+                    <span class="info-label">Model:</span>
+                    <span class="info-value" id="modelName">SMFA_YOLO11x</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Device:</span>
+                    <span class="info-value" id="modelDevice">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Framework:</span>
+                    <span class="info-value">YOLOv8 + PyTorch</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <p>Real-time classroom occupancy monitoring</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Stats Cards -->
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-content">
+                                <h3>Current Occupancy</h3>
+                                <p class="stat-value" id="currentOccupancy">--</p>
+                                <span class="stat-label">People Detected</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-content">
+                                <h3>Average Occupancy</h3>
+                                <p class="stat-value" id="avgOccupancy">--</p>
+                                <span class="stat-label">Last Detection</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-content">
+                                <h3>Peak Occupancy</h3>
+                                <p class="stat-value" id="peakOccupancy">--</p>
+                                <span class="stat-label">Maximum Detected</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon">⏱️</div>
+                            <div class="stat-content">
+                                <h3>Last Update</h3>
+                                <p class="stat-value" id="lastUpdate">--:--</p>
+                                <span class="stat-label">Timestamp</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Feed & Detection Chart -->
+                    <div class="charts-row">
+                        <div class="chart-card">
+                            <h3>Occupancy Trend</h3>
+                            <canvas id="occupancyChart"></canvas>
+                        </div>
+
+                        <div class="chart-card">
+                            <h3>Confidence Distribution</h3>
+                            <canvas id="confidenceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detection Section -->
+            <section id="detect" class="section">
+                <div class="section-header">
+                    <h2>Detection</h2>
+                    <p>Upload images or videos for analysis</p>
+                </div>
+
+                <div class="detection-container">
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📤</div>
+                        <h3>Drop files here or click to upload</h3>
+                        <p>Supported: Images (PNG, JPG, GIF, BMP) or Videos (MP4, AVI, MOV, MKV)</p>
+                        <input type="file" id="fileInput" class="hidden-input" accept="image/*,video/*">
+                    </div>
+
+                    <!-- Detection Results -->
+                    <div class="detection-results" id="detectionResults" style="display: none;">
+                        <div class="result-header">
+                            <h3 id="resultTitle">Detection Results</h3>
+                            <button class="btn-close" id="closeResults">✕</button>
+                        </div>
+
+                        <div class="result-content">
+                            <!-- Image/Video Preview -->
+                            <div class="preview-container">
+                                <img id="resultImage" class="result-media" style="display: none;">
+                                <video id="resultVideo" class="result-media" controls style="display: none;"></video>
+                            </div>
+
+                            <!-- Detection Details -->
+                            <div class="detection-details">
+                                <div class="detail-card">
+                                    <h4>📊 Summary</h4>
+                                    <div class="detail-row">
+                                        <span>People Detected:</span>
+                                        <strong id="detectedCount">0</strong>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span>Confidence Threshold:</span>
+                                        <strong id="detectedConfidence">50%</strong>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span>Processing Time:</span>
+                                        <strong id="processingTime">--</strong>
+                                    </div>
+                                </div>
+
+                                <div class="detail-card">
+                                    <h4>🎯 Detections</h4>
+                                    <div id="detectionsList" class="detections-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="section">
+                <div class="section-header">
+                    <h2>Analytics</h2>
+                    <p>Historical data and patterns</p>
+                </div>
+
+                <div class="analytics-container">
+                    <div class="analytics-card">
+                        <h3>Occupancy Over Time</h3>
+                        <canvas id="timeSeriesChart"></canvas>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Classroom Status</h3>
+                        <div class="status-grid">
+                            <div class="status-item empty">
+                                <span class="status-icon">🟢</span>
+                                <span>Empty</span>
+                                <span class="status-count">0-5 people</span>
+                            </div>
+                            <div class="status-item moderate">
+                                <span class="status-icon">🟡</span>
+                                <span>Moderate</span>
+                                <span class="status-count">6-20 people</span>
+                            </div>
+                            <div class="status-item full">
+                                <span class="status-icon">🔴</span>
+                                <span>Full</span>
+                                <span class="status-count">20+ people</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                    <p>Configure detection parameters</p>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-card">
+                        <h3>Detection Settings</h3>
+                        <div class="setting-row">
+                            <label>Confidence Threshold</label>
+                            <div class="slider-container">
+                                <input type="range" id="settingsConfidence" min="0.1" max="1" step="0.05" value="0.5">
+                                <span id="settingsConfidenceValue">50%</span>
+                            </div>
+                        </div>
+                        <p class="setting-help">Lower values detect more people but may have more false positives</p>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>API Endpoint</h3>
+                        <div class="setting-row">
+                            <label>Server URL</label>
+                            <input type="text" id="apiUrl" class="input-field" value="http://localhost:5000" placeholder="http://localhost:5000">
+                        </div>
+                        <button class="btn-primary" id="testConnection">Test Connection</button>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Export Settings</h3>
+                        <div class="button-group">
+                            <button class="btn-secondary" id="exportData">📥 Export Data</button>
+                            <button class="btn-secondary" id="clearData">🗑️ Clear Cache</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="spinner-overlay" id="loadingSpinner" style="display: none;">
+        <div class="spinner">
+            <div class="spinner-ring"></div>
+            <p id="spinnerText">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Hidden file inputs -->
+    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+    <input type="file" id="videoInput" accept="video/*" style="display: none;">
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="static/js/config.js"></script>
+    <script src="static/js/api.js"></script>
+    <script src="static/js/charts.js"></script>
+    <script src="static/js/ui.js"></script>
+    <script src="static/js/app.js"></script>
+</body>
+</html>
